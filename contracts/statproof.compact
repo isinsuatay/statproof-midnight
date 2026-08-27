@@ -1,0 +1,50 @@
+pragma language_version >= 0.23;
+
+import CompactStandardLibrary;
+
+/*
+ * StatProof — Privacy-Preserving Statistical Threshold Proof
+ *
+ * PUBLIC:
+ * - threshold: the minimum value required by the application.
+ * - verified: whether a valid threshold proof has been recorded.
+ * - proofCount: number of successful proofs recorded.
+ *
+ * PRIVATE:
+ * - The user's actual value is provided through the private witness
+ *   getPrivateValue().
+ * - The actual private value must never be written to the public ledger.
+ *
+ * PROOF:
+ * - The contract proves that the private value is greater than or equal
+ *   to the public threshold without revealing the private value itself.
+ *
+ * DISCLOSURE:
+ * - Only the boolean verification result is deliberately disclosed.
+ */
+
+export ledger threshold: Uint<64>;
+
+export ledger verified: Boolean;
+
+export ledger proofCount: Uint<64>;
+
+witness getPrivateValue(): Uint<64>;
+
+export circuit initialize(publicThreshold: Uint<64>): [] {
+    threshold = disclose(publicThreshold);
+    verified = false;
+    proofCount = 0;
+}
+
+export circuit proveThreshold(): [] {
+    const privateValue = getPrivateValue();
+
+    assert(
+        privateValue >= threshold,
+        "Private value does not satisfy the threshold"
+    );
+
+    verified = disclose(true);
+    proofCount = proofCount + 1 as Uint<64>;
+}
