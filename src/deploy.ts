@@ -25,7 +25,7 @@ globalThis.WebSocket = WebSocket;
 
 // Identifier under which this contract's private state is stored. The
 // hello-world contract has no witnesses, so its private state is empty ({}).
-const PRIVATE_STATE_ID = 'helloWorldPrivateState';
+const PRIVATE_STATE_ID = 'statProofPrivateState';
 
 // ─── Network configuration ─────────────────────────────────────────────────────
 //
@@ -71,20 +71,49 @@ async function waitForProofServer(maxAttempts = 60, delayMs = 2000): Promise<boo
 // ─── Compiled contract loading ─────────────────────────────────────────────────
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const zkConfigPath = path.resolve(__dirname, '..', 'contracts', 'managed', 'hello-world');
+const zkConfigPath = path.resolve(
+  __dirname,
+  '..',
+  'contracts',
+  'managed',
+  'statproof',
+);
+
 const contractPath = path.join(zkConfigPath, 'contract', 'index.js');
 
 if (!fs.existsSync(contractPath)) {
-  console.error('\n❌ Contract not compiled! Run: npm run compile\n');
+  console.error('\n❌ StatProof contract not compiled! Run: npm run compile\n');
   process.exit(1);
 }
 
-const HelloWorld = await import(pathToFileURL(contractPath).href);
+const StatProof = await import(pathToFileURL(contractPath).href);
 
-const compiledContract = CompiledContract.make('hello-world', HelloWorld.Contract).pipe(
-  CompiledContract.withVacantWitnesses,
-  CompiledContract.withCompiledFileAssets(zkConfigPath),
+const witnesses = {
+  getPrivateValue: () => {
+    return [{}, 85n];
+  },
+};
+
+const baseContract = CompiledContract.make(
+  'statproof',
+  StatProof.Contract,
 );
+
+const contractWithWitnesses = (
+  CompiledContract.withWitnesses as any
+)(
+  baseContract,
+  witnesses,
+);
+
+const compiledContract = (
+  CompiledContract.withCompiledFileAssets as any
+)(
+  contractWithWitnesses,
+  zkConfigPath,
+);
+
+
 
 // ─── Providers ─────────────────────────────────────────────────────────────────
 
@@ -117,7 +146,7 @@ async function createProviders(walletCtx: WalletContext) {
 
   return {
     privateStateProvider: levelPrivateStateProvider({
-      privateStateStoreName: 'hello-world-state',
+      privateStateStoreName: 'statproof-state',
       accountId,
       privateStoragePasswordProvider: () => privateStatePassword,
     }),
