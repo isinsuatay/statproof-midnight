@@ -60,3 +60,8 @@ temp/
 .midnight-wallet-state/
 
 printf '\n# Local Midnight LevelDB state\nmidnight-level-db/\n' >> .gitignore
+# Local runtime database
+midnight-level-db/
+
+# Local backup files
+*.backup.ts
