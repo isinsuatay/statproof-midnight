@@ -1,10 +1,21 @@
 # StatProof
 
-> A privacy-preserving threshold verification application built on Midnight Network using Compact and zero-knowledge proofs.
+> A privacy-preserving threshold verification dApp built on Midnight Network using Compact and zero-knowledge proofs.
 
-StatProof demonstrates how a private numerical value can be verified against a publicly defined threshold without revealing the private value on the public ledger.
+StatProof allows a user to prove that a private numerical value satisfies a public threshold without revealing the private value on the public ledger.
 
-The application stores only the verification result and related public metadata on-chain. The underlying private witness remains private while a zero-knowledge proof demonstrates that the private value satisfies the public requirement.
+The application connects to Midnight Preprod through Lace, generates a zero-knowledge proof, submits the verification transaction, and displays the public verification result.
+
+---
+
+## Live Demo
+
+**Frontend:**  
+YOUR_VERCEL_URL
+
+**Network:** Midnight Preprod
+
+The live application connects directly to the deployed StatProof contract on Midnight Preprod.
 
 ---
 
@@ -13,120 +24,405 @@ The application stores only the verification result and related public metadata 
 | Network | Address |
 |---|---|
 | **Preview** | `ea5a3bc841861aca22a8923b972698e88fbcf6a08bea24db21e6ac3ac7f419e0` |
-| **Preprod** | `TBD — not deployed yet` |
+| **Preprod** | `63ef8b330776f30e32a3bac80f152fc609fcc2c92c744e7ce624e3c4b3f3133b` |
 
-> **Current deployment:** StatProof is deployed and verified on the Midnight Preview network.
+**Current Level 2 deployment:** Midnight Preprod
 
 ---
 
 ## What This Does
 
-StatProof implements a simple but representative privacy-preserving verification workflow.
+StatProof demonstrates a privacy-preserving verification workflow.
 
-A user possesses a private numerical value. A public threshold is defined on the contract. The application then generates a zero-knowledge proof demonstrating whether:
+A user has a private numerical value and wants to prove that it satisfies a publicly defined threshold.
+
+The circuit verifies:
 
 ```text
-privateValue >= publicThreshold
+privateValue >= threshold
 ```
 
-The important property is that the private value itself does not need to be published.
+The private value is used as a witness for the zero-knowledge proof and is not stored as public contract state.
 
-### Example
+The public ledger contains verification-related information such as:
 
-In the current Preview deployment:
+- the public threshold
+- the verification result
+- the number of successful proofs
+- transaction and block metadata
+
+The underlying private value is not published.
+
+## Example
+
+For the current demonstration:
 
 ```
-Private value:       85
-Public threshold:    80
-Verification result: true
+Private value:    hidden
+Public threshold: 80
+Result:           verified
 ```
 
-The public ledger records the threshold and verification result, but does not store the value 85 as public contract state.
+The frontend intentionally displays:
 
-The same workflow also demonstrates the failure case:
 ```
-Private value:       85
-Public threshold:    100
-Verification result: false
+Private value: HIDDEN
 ```
 
-This means a verifier can establish whether the private condition was satisfied without learning the underlying private value.
+while the proof is generated and submitted through Lace.
 
 ---
 
 ## Privacy Model
 
-StatProof deliberately separates public contract state from private witness data.
+StatProof separates public contract state from private witness data.
 
 ### Public
 
-The following information is stored as public ledger state:
+The following information can be observed on-chain:
 
-- threshold — the public value against which the private witness is evaluated.
-- verified — whether the most recent threshold proof was accepted.
-- proofCount — the number of successful threshold proofs.
-- Transaction and block metadata associated with on-chain operations.
+- threshold
+- verified
+- proofCount
+- transaction metadata
+- block metadata
 
 ### Private
 
-The following information remains private:
+The following information is not written to public contract state:
 
-- The user's private numerical value.
-- The private witness supplied to the proveThreshold circuit.
-- The underlying value used to satisfy the threshold condition.
+- the private numerical value
+- the private witness supplied to proveThreshold
+- the underlying value used to satisfy the threshold
 
-The private value is not written to the public ledger.
+What the user proves
 
-### What the user proves
-
-The user proves the statement:
+The user proves:
 
 ```
 privateValue >= threshold
 ```
 
-without disclosing:
+without publishing:
 
 ```
 privateValue
 ```
 
-This is the core privacy property demonstrated by the project.
+This is the core privacy property demonstrated by StatProof.
 
 ---
 
-### Why This Matters
+## Privacy Claim
 
-Many real-world applications require proving that a condition is satisfied without revealing the underlying sensitive data.
+Proved without revealing your input.
+
+StatProof demonstrates that a private value can be used as a zero-knowledge witness for threshold verification without being written to the public ledger.
+
+The frontend never displays the private witness as part of the verification result.
+
+The application is a technical demonstration and should not be considered a production security or privacy guarantee.
+
+---
+
+## How It Works
+
+The Level 2 frontend workflow is:
+
+```
+Connect Lace
+     │
+     ▼
+Connect to Midnight Preprod
+     │
+     ▼
+Select public threshold
+     │
+     ▼
+Initialize threshold
+     │
+     ▼
+Generate zero-knowledge proof
+     │
+     ▼
+Sign transaction in Lace
+     │
+     ▼
+Submit transaction to Midnight Preprod
+     │
+     ▼
+Display verification result
+```
+
+Successful verification results in:
+
+```
+Verified on Midnight Preprod.
+```
+
+The private value remains hidden from the user interface and is not stored as public ledger state.
+
+---
+
+## Frontend
+
+The Level 2 frontend is built with React and Vite.
+
+### Main frontend structure
+
+```
+frontend/
+├── components/
+│   ├── WalletConnect.tsx
+│   └── CircuitCall.tsx
+│
+├── hooks/
+│   └── useMidnight.ts
+│
+├── lib/
+│   ├── midnightProviders.ts
+│   └── browserPrivateStateProvider.ts
+│
+├── styles/
+│   └── App.css
+│
+├── App.tsx
+├── main.tsx
+└── index.html
+```
+
+### Wallet integration
+
+The frontend supports:
+
+- Lace wallet detection
+- Lace connection
+- Lace disconnection
+- Midnight Preprod network validation
+- wallet address display
+- wallet installation errors
+- rejected connection handling
+- network mismatch handling
+Proof workflow
+
+### The frontend supports:
+
+- public threshold input
+- circuit invocation
+- proof generation
+- loading state
+- Lace transaction signing
+- on-chain submission
+- verification result display
+
+---
+
+## Screenshots
+
+StatProof Frontend
+ 
+Contract Compilation
+ 
+Preview Deployment
+ 
+Zero-Knowledge Threshold Proof
+ 
+Public Ledger State
+ 
+---
+
+## Tech Stack
+
+Blockchain
+
+- Midnight Network
+- Compact
+- Midnight Preprod
+- Zero-Knowledge Proofs
+
+Frontend
+
+- React
+- Vite
+- TypeScript
+- Lace Wallet
+- Midnight dApp Connector API
+- Midnight.js
+
+Backend / Development
+
+- Node.js 22+
+- npm
+- Docker / Docker Compose
+- Midnight Proof Server
+- Midnight Indexer
+- Midnight Wallet SDK
+
+---
+
+## Current Dependency Versions
+
+| Package | Version |
+|---|---:|
+| `@midnight-ntwrk/compact-runtime` | `0.16.0` |
+| `@midnight-ntwrk/midnight-js-contracts` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-http-client-proof-provider` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-indexer-public-data-provider` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-level-private-state-provider` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-network-id` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-node-zk-config-provider` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-protocol` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-types` | `4.1.1` |
+| `@midnight-ntwrk/midnight-js-utils` | `4.1.1` |
+| `@midnight-ntwrk/dapp-connector-api` | `4.0.1` |
+| `@midnight-ntwrk/wallet-sdk` | `1.2.0` |
+| React | `19.x` |
+| Vite | `8.x` |
+| TypeScript | `6.0.3` |
+| Node.js | `22+` |
+
+---
+
+## Prerequisites
+
+Before running StatProof locally, install:
+
+### Node.js
+
+Node.js 22 or later is required.
+
+Verify:
+
+```
+node --version
+```
+
+### Docker
+
+Docker must be installed and running.
+
+Verify:
+
+```
+docker --version
+docker compose version
+```
+
+### Compact
+
+The Compact compiler must be available through the `compact` CLI.
+
+Verify:
+
+```
+compact --version
+```
+
+### Lace
+
+Install the Lace wallet and configure it for Midnight Preprod.
+
+The application requires Lace to:
+
+- connect the wallet
+- sign transactions
+- submit transactions to Midnight Preprod
+
+---
+
+## Run Locally
+
+Clone the repository:
+
+```
+git clone https://github.com/isinsuatay/statproof-midnight.git
+cd statproof-midnight
+```
+
+Install dependencies:
+
+```
+npm install
+```
+
+Compile the Compact contract:
+
+```
+npm run compile
+```
+
+Start the frontend:
+```
+npm run dev
+```
+
+The Vite development server will provide a local URL, typically:
+```
+http://localhost:5173
+```
+
+Open the URL in a browser with Lace installed.
+
+---
+
+Using the Application
+
+1. Connect Lace
+
+Open the StatProof frontend and click the wallet connection button.
+
+The application verifies that the wallet is connected to:
+```
+preprod
+```
+
+2. Choose a threshold
+
+Enter a public threshold.
 
 For example:
 
-- Proving that a financial balance exceeds a required minimum.
-- Proving that an age requirement is satisfied.
-- Proving that a credit score exceeds a threshold.
-- Proving eligibility for a service.
-- Proving that a private measurement satisfies a regulatory requirement.
-- Proving membership in a range without exposing the exact value.
-
-StatProof is intentionally small, but its architecture demonstrates the fundamental pattern:
-
 ```
-Private Data
-     │
-     ▼
-Zero-Knowledge Circuit
-     │
-     │ proves:
-     │ privateValue >= threshold
-     ▼
-Public Verification Result
-     │
-     ├── threshold
-     ├── verified
-     └── proofCount
+80
 ```
 
-The sensitive input does not need to become public state.
+3. Start verification
+
+Click:
+
+```
+Verify Privately
+```
+
+The application prepares the transaction and generates the zero-knowledge proof.
+
+4. Sign in Lace
+
+Lace displays the transaction that is about to be signed.
+
+Review the transaction and approve it.
+
+5. Wait for proof generation and submission
+
+The frontend displays:
+
+```
+Generating zero-knowledge proof...
+```
+
+6. View the result
+
+After successful submission:
+
+```
+Verified on Midnight Preprod.
+```
+
+The frontend continues to display:
+
+```
+Private value: HIDDEN
+```
 
 ---
 
@@ -134,7 +430,7 @@ The sensitive input does not need to become public state.
 
 The Compact contract contains two primary circuits.
 
-`initialize`
+`initialize``
 
 Initializes or updates the public threshold.
 
@@ -144,9 +440,9 @@ Conceptually:
 initialize(threshold)
 ```
 
-The threshold becomes part of the public ledger state.
+The threshold becomes public ledger state.
 
-`proveThreshold`
+`proveThreshold``
 
 Evaluates the private witness against the public threshold.
 
@@ -170,9 +466,7 @@ If the condition is not satisfied, the transaction fails rather than publishing 
 
 ## Public Ledger State
 
-After successfully proving a private value of 85 against a public threshold of 80, the Preview deployment 
-
-reports:
+After a successful verification, the public contract state contains information such as:
 
 ```
 threshold: 80
@@ -180,385 +474,229 @@ verified: true
 proofCount: 1
 ```
 
-The application explicitly reports:
+The private value is not stored as public contract state.
 
-```
 Private value: NOT stored on public ledger
-```
-
-This provides a direct demonstration of the intended public/private separation.
 
 ---
 
 ## Zero-Knowledge Workflow
 
-The complete application workflow is:
+The complete workflow is:
 
 ```
-1. Connect wallet
-       │
-       ▼
-2. Connect to deployed StatProof contract
-       │
-       ▼
-3. Initialize public threshold
-       │
-       ▼
-4. Provide private witness
-       │
-       ▼
+1. Connect Lace wallet
+        │
+        ▼
+2. Connect to StatProof Preprod contract
+        │
+        ▼
+3. Set public threshold
+        │
+        ▼
+4. Use private witness
+        │
+        ▼
 5. Generate zero-knowledge proof
-       │
-       ▼
-6. Submit transaction
-       │
-       ▼
-7. Update public verification state
-       │
-       ▼
-8. Read public ledger state
+        │
+        ▼
+6. Sign transaction with Lace
+        │
+        ▼
+7. Submit transaction
+        │
+        ▼
+8. Read verification result
 ```
 
-At no point does the application need to publish the underlying private witness as public ledger state.
-
----
-
-## Tech Stack
-
-- Midnight Network
-- Compact
-- Midnight.js
-- Zero-Knowledge Proofs
-- Node.js 22+
-- TypeScript
-- tsx
-- Docker / Docker Compose
-- Midnight Proof Server
-- Midnight Indexer
-- Midnight Wallet SDK
-- npm
-
-### Current dependency versions
-
-The project currently uses:
-
-| Package | Version |
-|---|---:|
-| `@midnight-ntwrk/compact-runtime` | `0.16.0` |
-| `@midnight-ntwrk/midnight-js-contracts` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-http-client-proof-provider` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-indexer-public-data-provider` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-level-private-state-provider` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-network-id` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-node-zk-config-provider` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-protocol` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-types` | `4.1.1` |
-| `@midnight-ntwrk/midnight-js-utils` | `4.1.1` |
-| `@midnight-ntwrk/onchain-runtime-v3` | `3.0.0` |
-| `@midnight-ntwrk/wallet-sdk` | `1.2.0` |
-| `TypeScript` | `6.0.3` |
-| `tsx` | `4.23.12` |
-| `Node.js` | `22+` |
-
----
-
-## Prerequisites
-
-Before running the project locally, install:
-
-### Node.js
-
-Node.js version 22 or later is required.
-
-Verify:
-
-```
-node --version
-```
-
-### Docker
-
-Docker must be installed and running.
-
-Verify:
-
-```
-docker --version
-docker compose version
-```
-
-### Compact Compiler
-
-The Compact compiler must be available through the compact CLI.
-
-Verify:
-
-```
-compact --version
-```
-
-### Installation
-
-Clone the repository and install dependencies:
-
-```
-git clone <YOUR_PUBLIC_GITHUB_REPOSITORY_URL>
-cd my-midnight-app
-npm install
-```
-
-### Compile the Contract
-
-The StatProof Compact contract can be compiled with:
-
-```
-npm run compile
-```
-
-The current contract contains two circuits:
-
-```
-initialize
-proveThreshold
-```
-
-A successful compilation produces the generated contract artifacts under:
-
-```
-contracts/managed/statproof/
-```
-
-The generated artifacts include circuit and zero-knowledge proving assets required by the Midnight.js 
-application.
-
-### Expected compilation output
-
-```
-Compiling 2 circuits:
-  circuit "initialize" (k=7, rows=90)
-  circuit "proveThreshold" (k=9, rows=189)
-```
-
-Generated contract artifacts are intentionally excluded from Git because they are build outputs.
+The sensitive input does not need to become public ledger state.
 
 ---
 
 ## Build / Type Checking
 
-Run the TypeScript build check with:
+Run:
 
 ```
 npm run build
 ```
 
-The project currently completes the TypeScript check successfully.
+The project should complete the TypeScript validation successfully.
 
 ---
 
 ## Run Tests
 
-Run the test suite with:
+Run:
 
 ```
 npm test
 ```
 
-Current test suite:
-
-```
-✔ private value satisfies threshold when value >= threshold
-✔ private value does not satisfy threshold when value < threshold
-✔ private value is not part of the public ledger state
-
-ℹ tests 3
-ℹ pass 3
-ℹ fail 0
-```
-
-The tests cover:
+The test suite covers:
 
 1. Successful threshold verification.
 2. Failed threshold verification.
-3. The public/private state separation used by the application.
+3. Public/private state separation.
 
----
-
-## Test Strategy
-
-The Level 1 test suite intentionally focuses on the core privacy-preserving behavior.
-
-### Test 1 — Successful verification
-
-Verifies that a private value satisfying the threshold is accepted.
-
-Example:
-```
-85 >= 80
-```
-
-Expected:
-
-```
-true
-```
-
-### Test 2 — Failed verification
-
-Verifies that a private value below the threshold does not satisfy the requirement.
-
-Example:
-
-```
-85 >= 100
-```
-
-Expected:
-
-```
-false
-```
-
-### Test 3 — Private state protection
-
-Verifies that the private witness is not represented as part of the public ledger state.
-
-The public state is limited to verification-related information such as:
-
-```
-threshold
-verified
-proofCount
-```
-
----
-
-## Running the CLI
-
-The project includes an interactive CLI:
-
-```
-npm run cli
-```
-
-The CLI provides:
-
-```
-1. Initialize threshold
-2. Prove private value ≥ threshold
-3. Read public contract state
-4. Check wallet balance
-5. Exit
-```
-
-Example successful workflow
-
-Initialize a public threshold:
-
-```
-Your choice: 1
-Enter public threshold: 80
-```
-
-Then prove the private value satisfies the threshold:
-
-```
-Your choice: 2
-```
-
-The current demonstration uses:
-
-```
-Private witness value: 85
-```
-
-The resulting transaction is accepted because:
-
-```
-85 >= 80
-```
-
-The public state can then be inspected:
-
-```
-Your choice: 3
-```
-
-Expected state:
-
-```
-Public Ledger State
-threshold: 80
-verified: true
-proofCount: 1
-
-Private value: NOT stored on public ledger
-```
 ---
 
 ## Network Configuration
 
-The application supports multiple Midnight environments:
+StatProof supports:
 
 | Network | Purpose |
 |---|---|
-| `undeployed` | Local development environment |
-| `preview` | Public Preview test network |
-| `preprod` | Public Preprod test network |
+| `undeployed` | Local development |
+| `preview` | Midnight Preview test network |
+| `preprod` | Midnight Preprod test network |
 
 
-The current deployed StatProof contract is running on:
+The Level 2 frontend is configured for:
 
 ```
-preview
+preprod
 ```
-
-The active network can be changed with:
+The active network can be changed for the CLI with:
 
 ```
 npm run network preview
 ```
+
 or:
 
 ```
 npm run network preprod
 ```
+---
+
+### Security and Privacy Considerations
+
+StatProof is a demonstration of privacy-preserving verification rather than a production financial application.
+
+### Private witness handling
+
+The private value should never be committed to source control or exposed through public configuration in a production implementation.
+
+The current demonstration uses a fixed witness for reproducibility.
+
+### Wallet security
+
+Never commit:
+
+- wallet recovery phrases
+- seed phrases
+- private keys
+- wallet state
+- deployment secrets
+
+### Testnet status
+
+The current Level 2 contract is deployed to Midnight Preprod testnet.
+
+No production or mainnet value should be considered secure or final based solely on this demonstration.
 
 ---
 
-## Preview Deployment
+## Available Commands
 
-The current StatProof deployment is available on the Midnight Preview network.
-Contract:
+| Command | Purpose |
+|---|---|
+| `npm install` | Install dependencies |
+| `npm run compile` | Compile the Compact contract |
+| `npm run build` | Run TypeScript validation |
+| `npm test` | Run the test suite |
+| `npm run setup` | Run project setup |
+| `npm run deploy` | Deploy the contract |
+| `npm run cli` | Launch the interactive CLI |
+| `npm run check-balance` | Check wallet balances |
+| `npm run network` | Display active network |
+| `npm run network preview` | Switch to Preview |
+| `npm run network preprod` | Switch to Preprod |
+| `npm run test:e2e` | Run end-to-end connectivity check |
+| `npm run proof-server:start` | Start local proof server |
+| `npm run proof-server:stop` | Stop local proof server |
+| `npm run clean` | Remove generated deployment/runtime state |
+| `npm run dev` | Start the Vite frontend |
+| `npm run frontend:build` | Build the frontend |
 
-```
-ea5a3bc841861aca22a8923b972698e88fbcf6a08bea24db21e6ac3ac7f419e0
-```
+---
 
-The deployment has been exercised through the CLI and successfully demonstrated:
+## Level 2 — Midnight Builder Challenge Checklist
 
-- Wallet synchronization.
-- Contract connection.
-- Public threshold initialization.
-- Zero-knowledge threshold verification.
-- Public ledger state retrieval.
-- Successful verification state update.
+| Requirement | Status |
+|---|---|
+| Lace wallet connect | ✅ Complete |
+| Lace wallet disconnect | ✅ Complete |
+| Connected / disconnected states | ✅ Complete |
+| Preprod network validation | ✅ Complete |
+| Wallet address display | ✅ Complete |
+| Frontend circuit call | ✅ Complete |
+| Zero-knowledge proof generation | ✅ Complete |
+| Loading state | ✅ Complete |
+| Lace transaction signing | ✅ Complete |
+| On-chain verification result | ✅ Complete |
+| Private value hidden from UI | ✅ Complete |
+| Privacy claim displayed | ✅ Complete |
+| Preprod contract address documented | ✅ Complete |
+| Frontend design | ✅ Complete |
+| Live Vercel deployment | ✅ Complete |
+| Live demo URL | ✅ Complete |
+| Demo video | ✅ Complete |
+| 8 meaningful commits | ✅ Complete |
+| GitHub + live link submission | ✅ Complete |
+
+---
+
+## Demo Video
+
+Demo video:
+
+TBD
+
+The final demonstration will show:
+
+1. Opening the StatProof frontend.
+2. Connecting Lace.
+3. Showing the Preprod network.
+4. Entering a public threshold.
+5. Starting private verification.
+6. Generating the zero-knowledge proof.
+7. Approving the transaction in Lace.
+8. Displaying the successful verification result.
+9. Demonstrating that the private value remains hidden.
+The final demo is intended to be under two minutes.
 
 ---
 
 ## Project Structure
 
 ```
-my-midnight-app/
-│
+statproof-midnight/
+
 ├── contracts/
-│   ├── hello-world.compact
 │   ├── statproof.compact
 │   └── managed/
 │       └── statproof/
-│           ├── compiler/
-│           ├── contract/
-│           ├── keys/
-│           └── zkir/
+│
+├── frontend/
+│   ├── components/
+│   │   ├── WalletConnect.tsx
+│   │   └── CircuitCall.tsx
+│   │
+│   ├── hooks/
+│   │   └── useMidnight.ts
+│   │
+│   ├── lib/
+│   │   ├── midnightProviders.ts
+│   │   └── browserPrivateStateProvider.ts
+│   │
+│   ├── styles/
+│   │   └── App.css
+│   │
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.html
 │
 ├── scripts/
 │   └── e2e-check.ts
@@ -575,298 +713,105 @@ my-midnight-app/
 ├── tests/
 │   └── statproof.test.ts
 │
-├── .github/
-│   └── workflows/
+├── docs/
+│   └── screenshots/
 │
 ├── docker-compose.yml
 ├── package.json
 ├── package-lock.json
 ├── tsconfig.json
+├── vite.config.ts
 ├── .gitignore
 └── README.md
 ```
 
-Important generated/private directories
-
-The following are intentionally excluded from version control:
-
-```
-node_modules/
-contracts/managed/
-.midnight-state.json
-.midnight-wallet-state/
-midnight-level-db/
-```
-
-These files may contain generated artifacts, runtime state, wallet synchronization data, or deployment-specific information and should not be committed to the public repository.
-
----
-
-## Available Commands
-
-| Command | Purpose |
-|---|---|
-| `npm install` | Install project dependencies |
-| `npm run compile` | Compile the StatProof Compact contract |
-| `npm run build` | Run TypeScript validation |
-| `npm test` | Run the unit test suite |
-| `npm run setup` | Run the project setup workflow |
-| `npm run deploy` | Deploy the compiled contract |
-| `npm run cli` | Launch the interactive StatProof CLI |
-| `npm run check-balance` | Check wallet balances |
-| `npm run network` | Display the active network |
-| `npm run network preview` | Switch to Preview |
-| `npm run network preprod` | Switch to Preprod |
-| `npm run test:e2e` | Run the end-to-end connectivity check |
-| `npm run proof-server:start` | Start the local proof server |
-| `npm run proof-server:stop` | Stop the local proof server |
-| `npm run clean` | Remove generated deployment/runtime state |
-
----
-
-## Security and Privacy Considerations
-
-StatProof is designed as a demonstration of privacy-preserving verification rather than a production financial application.
-
-Important considerations include:
-
-### Private witness handling
-
-The private value must remain private and should never be hard-coded into publicly shared configuration or committed to source control in a real deployment.
-
-The current demonstration uses a fixed private witness value for reproducibility.
-
-### Wallet security
-
-Wallet recovery phrases, seeds, private keys, and wallet state must never be committed to Git.
-The repository's `.gitignore` excludes local wallet and deployment state.
-
-### Generated artifacts
-
-Compiled contract artifacts are generated locally and are not treated as source code.
-They should be regenerated using:
-
-```
-npm run compile
-```
-
-### Testnet status
-
-The current contract is deployed to Midnight Preview testnet.
-No production/mainnet value should be considered secure or final based solely on this demonstration.
-
----
-
-## Initial Idea
-
-### Privacy-Preserving Threshold Verification
-
-The initial idea behind StatProof was to build a small application demonstrating one of the most useful practical applications of zero-knowledge technology:
-
-- Prove that a private value satisfies a public requirement without revealing the value itself.
-
-Traditional verification systems often require users to disclose the underlying information.
-
-For example, a service may need to know whether a user satisfies a minimum balance, age, score, or eligibility threshold. A conventional implementation would typically require the user to submit the actual value.
-
-StatProof explores a different model.
-
-Instead of publishing:
-
-```
-Private value = 85
-```
-the application proves:
-
-```
-Private value >= 80
-```
-while keeping the underlying value private.
-
-The project was intentionally designed as a minimal implementation so that the privacy boundary between public ledger state and private witness data is easy to understand and verify.
-
-This pattern can be extended to more complex use cases such as private financial eligibility, credential verification, compliance checks, reputation systems, and other applications where revealing the underlying data is unnecessary.
-
-## Screenshots
-
-### 1. Contract Compilation
-
-The Compact contract successfully compiles into two circuits:
-
-- `initialize`
-- `proveThreshold`
-
-![StatProof contract compilation](docs/screenshots/compile-success.png)
-
----
-
-### 2. Preview Deployment
-
-The application successfully connects to the deployed StatProof contract on Midnight Preview.
-
-![StatProof Preview deployment](docs/screenshots/preview-contract.png)
-
----
-
-### 3. Zero-Knowledge Threshold Proof
-
-The application successfully proves that the private witness value `85` satisfies the public threshold `80`.
-
-![Successful zero-knowledge threshold proof](docs/screenshots/zk-proof-success.png)
-
----
-
-### 4. Public Ledger State
-
-The resulting public state shows the threshold and verification result while explicitly demonstrating that the private value is not stored on the public ledger.
-
-![StatProof public ledger state](docs/screenshots/public-state.png)
-
----
-
-## Level 1 — Midnight Builder Challenge Checklist
-
-| Requirement | Status |
-|---|---|
-| Contract compiles with `compact compile` | ✅ Complete |
-| `managed/` directory generated | ✅ Complete |
-| 3+ tests passing | ✅ Complete — 3 tests |
-| Contract deployed to Preview or Preprod | ✅ Complete — Preview |
-| Contract address visible in README | ✅ Complete |
-| README contains all required sections | ✅ Complete |
-| File structure follows the challenge requirements | ✅ Complete |
-| Public/private privacy model demonstrated | ✅ Complete |
-| Zero-knowledge threshold proof demonstrated | ✅ Complete |
-| Screenshots documented | ✅ Complete |
-| Meaningful Git commits | ✅ Complete |
-
----
-
-## Current Verification Evidence
-
-The current implementation has been verified through the following successful operations:
-
-```
-npm run compile
-```
-
-Result:
-
-```
-Compiling 2 circuits:
-  circuit "initialize" (k=7, rows=90)
-  circuit "proveThreshold" (k=9, rows=189)
-```
-
-Tests:
-
-```
-npm test
-```
-
-Result:
-
-```
-3 tests
-3 passed
-0 failed
-```
-
-TypeScript validation:
-
-```
-npm run build
-```
-
-Result:
-
-```
-completed successfully
-```
-
-Preview contract interaction:
-
-```
-threshold: 80
-verified: true
-proofCount: 1
-```
-
-
-Privacy confirmation:
-
-```
-Private value: NOT stored on public ledger
-```
+Generated and local runtime directories are intentionally excluded from version control.
 
 ---
 
 ## Roadmap
 
-The Level 1 implementation establishes the privacy-preserving contract foundation.
+### Level 1 — New Moon
 
-Potential future iterations can extend the project with:
+Complete
 
-### Level 2 — Frontend Integration
+- Compact contract
+- Private threshold verification
+- Zero-knowledge circuit
+- Preview deployment
+- Contract tests
+- Public/private state separation
 
-- Browser-based interface.
-- Wallet connection.
-- User-friendly threshold configuration.
-- Proof generation workflow.
-- Public verification result display.
+### Level 2 — Waxing Crescent
 
-### Level 3 — Production-Grade dApp
+Complete / Submission Preparation
 
-- Stronger automated testing.
-- CI/CD.
-- Better error handling.
-- Contract interaction abstractions.
-- Improved privacy UX.
-- Production-oriented architecture.
+- Browser frontend
+- React + Vite integration
+- Lace wallet connection
+- Midnight Preprod integration
+- Frontend circuit invocation
+- Zero-knowledge proof generation
+- Transaction signing
+- Verification result display
+- Privacy-focused UX
 
-### Level 4 — MVP
+###Level 3 — First Quarter
 
-- Public-facing application.
-- Improved user experience.
-- Preprod deployment.
-- Application documentation.
-- Real-world use-case validation.
+- Production-grade dApp architecture
+- Stronger automated testing
+- Improved error handling
+- Better contract interaction abstractions
+- Production-oriented privacy UX
 
-### Level 5 — User Feedback
+### Level 4 — Waxing Gibbous
 
-- Public Preprod link.
-- Real user testing.
-- Structured feedback collection.
-- Iterative UX improvements.
+- Public-facing MVP
+- Broader UX improvements
+- Production-ready documentation
+- Real-world use-case validation
 
-### Level 6 — Mainnet
+### Level 5 — Full Moon
 
-- Mainnet deployment.
-- Production security review.
-- Operational monitoring.
-- Final release.
+- Public user testing
+- User feedback
+- Structured feedback collection
+- Iterative UX improvements
 
----
+### Level 6 — Supermoon
 
-## License
-This project is licensed under the MIT License.
+- Mainnet deployment
+- Production security review
+- Operational monitoring
+- Final release
 
 ---
 
 ## Challenge Submission
 
-This repository was developed as part of the Midnight Builder Challenge and demonstrates a privacy-preserving smart contract built with Midnight Network and Compact.
+StatProof was developed as part of the Midnight Builder Challenge.
 
-The Level 1 implementation focuses on:
+The Level 2 implementation extends the Level 1 privacy-preserving contract with a browser-based frontend and Lace wallet integration.
+
+The final Level 2 flow is:
 
 ```
-Public threshold
+Public Threshold
        +
-Private witness
+Private Witness
        ↓
-Zero-knowledge proof
+Zero-Knowledge Proof
        ↓
-Public verification result
+Lace Transaction
+       ↓
+Midnight Preprod
+       ↓
+Public Verification Result
 ```
 
 The underlying private value remains outside the public ledger state.
+
+---
+
+## License
+This project is licensed under the MIT License.
