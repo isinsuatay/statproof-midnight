@@ -1,5 +1,7 @@
 import type { ConnectedAPI, InitialAPI } from '@midnight-ntwrk/dapp-connector-api';
 
+const LACE_URL = 'https://www.lace.io/';
+
 type WalletConnectProps = {
   wallet: InitialAPI | null;
   connected: ConnectedAPI | null;
@@ -26,15 +28,8 @@ export default function WalletConnect({
   const isConnected = connected !== null;
 
   return (
-    <section
-      style={{
-        padding: '24px',
-        border: '1px solid #ddd',
-        borderRadius: '16px',
-        marginBottom: '24px',
-      }}
-    >
-      <h2 style={{ marginTop: 0 }}>Wallet</h2>
+    <section>
+      <h2>Wallet</h2>
 
       {!isConnected ? (
         <>
@@ -44,34 +39,30 @@ export default function WalletConnect({
               : 'No compatible Midnight wallet detected.'}
           </p>
 
-          <button
-            onClick={onConnect}
-            disabled={isConnecting || !wallet}
-            style={{
-              padding: '12px 20px',
-              borderRadius: '10px',
-              border: 'none',
-              cursor: isConnecting || !wallet ? 'default' : 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            {isConnecting ? 'Connecting…' : 'Connect Lace'}
-          </button>
+          <div className="actions">
+            <button
+              type="button"
+              onClick={onConnect}
+              disabled={isConnecting || !wallet}
+            >
+              {isConnecting && <span className="spinner" aria-hidden="true" />}
+              {isConnecting ? 'Connecting…' : 'Connect Lace'}
+            </button>
+
+            {!wallet && (
+              <button type="button" onClick={onDetectWallet}>
+                Check Again
+              </button>
+            )}
+          </div>
 
           {!wallet && (
-            <button
-              onClick={onDetectWallet}
-              style={{
-                marginLeft: '10px',
-                padding: '12px 20px',
-                borderRadius: '10px',
-                border: '1px solid #ccc',
-                background: 'transparent',
-                cursor: 'pointer',
-              }}
-            >
-              Check Again
-            </button>
+            <p className="hint">
+              Lace is a browser extension.{' '}
+              <a href={LACE_URL} target="_blank" rel="noreferrer">
+                Get Lace
+              </a>
+            </p>
           )}
         </>
       ) : (
@@ -94,34 +85,13 @@ export default function WalletConnect({
             <strong>Address:</strong> {address}
           </p>
 
-          <button
-            onClick={onDisconnect}
-            style={{
-              padding: '12px 20px',
-              borderRadius: '10px',
-              border: '1px solid #ccc',
-              background: 'transparent',
-              cursor: 'pointer',
-            }}
-          >
+          <button type="button" onClick={onDisconnect}>
             Disconnect
           </button>
         </>
       )}
 
-      {error && (
-        <p
-          role="alert"
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            borderRadius: '8px',
-            background: '#fff1f1',
-          }}
-        >
-          {error}
-        </p>
-      )}
+      {error && <div role="alert">{error}</div>}
     </section>
   );
 }

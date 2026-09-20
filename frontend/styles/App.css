@@ -953,22 +953,49 @@ a {
 }
 
 /* --------------------------------------------------
-   Loading state
+   Busy indicator, hints and links
 -------------------------------------------------- */
 
-.panel--verify p:last-child {
-  animation: status-pulse 2s ease-in-out infinite;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-@keyframes status-pulse {
-  0%,
-  100% {
-    opacity: 0.65;
-  }
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 9px;
+  vertical-align: -2px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
 
-  50% {
-    opacity: 1;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
+}
+
+.panel p.hint {
+  color: var(--dim-soft);
+  font-size: 12.5px !important;
+}
+
+.panel a {
+  color: var(--violet-light);
+  text-underline-offset: 3px;
+}
+
+.panel a:hover {
+  color: var(--moon);
+}
+
+.panel--verify button + p {
+  margin-top: 16px !important;
 }
 
 /* --------------------------------------------------
