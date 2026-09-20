@@ -10,6 +10,7 @@ import type {
   ProofProvider,
 } from '@midnight-ntwrk/midnight-js-types';
 
+import { describeError } from '../lib/errors';
 import { createMidnightProviders } from '../lib/midnightProviders';
 
 type WalletState = {
@@ -75,7 +76,7 @@ export function useMidnight() {
       wallet,
       error: wallet
         ? null
-        : 'Lace wallet was not detected. Please install Lace and refresh the page.',
+        : 'Lace wallet was not detected. Open this page in a browser with the Lace extension installed (for example Chrome or Brave), then click "Check Again".',
     }));
 
     return wallet;
@@ -103,37 +104,21 @@ export function useMidnight() {
 
       if (configuration.networkId !== 'preprod') {
         throw new Error(
-          `Wrong network: expected preprod, received ${configuration.networkId}.`,
+          `Wrong network: Lace is connected to "${configuration.networkId}". Switch Lace to Midnight Preprod, then connect again.`,
         );
       }
 
       setNetworkId(configuration.networkId);
 
-      // Debug: hangi dalın seçildiğini doğrula
-      console.log(
-        '[debug] wallet name:',
-        wallet.name,
-        '| getProvingProvider type:',
-        typeof connected.getProvingProvider,
-      );
-
       let proofProvider: ProofProvider;
 
-      // Lace, getProvingProvider() metodunu resmi olarak desteklemiyor
-      // (bkz. Midnight docs) — property görünse bile çalışmayabiliyor.
-      // Bu yüzden Lace'i isimle tespit edip güvenli tarafa (yerel proof
-      // server) zorluyoruz; sadece Lace olmayan cüzdanlarda delege
-      // proving'i deniyoruz.
+      // Lace does not officially support getProvingProvider(): the property
+      // can be present without working. Lace is therefore detected by name
+      // and pinned to the local proof server. Delegated proving is only
+      // attempted for other wallets.
       const isLace = wallet.name.toLowerCase().includes('lace');
       const supportsDelegatedProving =
         !isLace && typeof connected.getProvingProvider === 'function';
-
-      console.log(
-        '[debug] isLace:',
-        isLace,
-        '| supportsDelegatedProving:',
-        supportsDelegatedProving,
-      );
 
       if (supportsDelegatedProving) {
         const { dappConnectorProofProvider } = await import(
@@ -153,13 +138,8 @@ export function useMidnight() {
           '@midnight-ntwrk/midnight-js-http-client-proof-provider'
         );
 
-        const proverServerUri = DEFAULT_LOCAL_PROOF_SERVER;
-
-
-        console.log('[debug] using local proof server at:', proverServerUri);
-
         proofProvider = httpClientProofProvider(
-          proverServerUri,
+          DEFAULT_LOCAL_PROOF_SERVER,
           zkConfigProvider,
         );
       }
@@ -186,10 +166,7 @@ export function useMidnight() {
         isConnecting: false,
         proofProvider: null,
         providers: null,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Wallet connection was rejected or failed.',
+        error: describeError(error, 'connect'),
       }));
     }
   }, [detectWallet, state.wallet, zkConfigProvider]);
