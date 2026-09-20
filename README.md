@@ -659,22 +659,7 @@ No production or mainnet value should be considered secure or final based solely
 
 ## Demo Video
 
-Demo video:
-
-TBD
-
-The final demonstration will show:
-
-1. Opening the StatProof frontend.
-2. Connecting Lace.
-3. Showing the Preprod network.
-4. Entering a public threshold.
-5. Starting private verification.
-6. Generating the zero-knowledge proof.
-7. Approving the transaction in Lace.
-8. Displaying the successful verification result.
-9. Demonstrating that the private value remains hidden.
-The final demo is intended to be under two minutes.
+[Watch the Level 2 Demo](https://www.youtube.com/watch?v=8LGlebqaJIY)
 
 ---
 
