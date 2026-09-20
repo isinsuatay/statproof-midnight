@@ -85,6 +85,7 @@ The private value enters the circuit as a private witness. Only the threshold, t
 | `@midnight-ntwrk/dapp-connector-api` | `4.0.1` |
 | `@midnight-ntwrk/wallet-sdk` | `1.2.0` |
 | Compact compiler | `0.31.1` |
+| Proof server image | `midnightntwrk/proof-server:8.1.0` |
 | React / Vite / TypeScript | `19.x` / `8.x` / `6.0.3` |
 
 ---
@@ -105,18 +106,18 @@ git clone https://github.com/isinsuatay/statproof-midnight.git
 cd statproof-midnight
 npm install
 npm run compile            # compile contracts/statproof.compact
-npm run proof-server:start # local proof server on port 6300 (Docker must be running)
+docker compose up -d proof-server  # local proof server on port 6300 (Docker must be running)
 npm run dev                # Vite dev server, usually http://localhost:5173
 ```
 
-Open the printed URL in a browser with Lace installed. Stop the proof server with `npm run proof-server:stop`.
+Open the printed URL in a browser with Lace installed. Check that it is healthy with `docker compose ps` and stop it with `docker compose down`.
 
 ### Using the live demo
 
 The live site needs the same local proof server, because Lace does not provide delegated proving:
 
 1. Install Lace and switch it to Midnight Preprod.
-2. Clone this repository and run `npm run proof-server:start` (Docker must be running).
+2. Clone this repository and run `docker compose up -d proof-server` from its root (Docker must be running). Wait until `docker compose ps` shows the container as healthy.
 3. Open the live demo, connect Lace, enter a threshold and click **Verify Privately**.
 
 If the proof server is not reachable, the app shows a message explaining how to start it.
@@ -230,8 +231,8 @@ React + Vite in `frontend/` (the spec's `src/` frontend), with wallet detection,
 | `npm test` | Run the test suite |
 | `npm run dev` | Start the Vite frontend |
 | `npm run frontend:build` | Build the frontend only |
-| `npm run proof-server:start` | Start the local proof server |
-| `npm run proof-server:stop` | Stop the local proof server |
+| `npm run proof-server:start` | Start the full local Docker stack (node, indexer, proof server) |
+| `npm run proof-server:stop` | Stop the local Docker stack |
 | `npm run setup` | Run project setup |
 | `npm run deploy` | Deploy the contract |
 | `npm run cli` | Launch the interactive CLI |
