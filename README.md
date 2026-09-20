@@ -118,7 +118,7 @@ The live site needs the same local proof server, because Lace does not provide d
 
 1. Install Lace and switch it to Midnight Preprod.
 2. Clone this repository and run `docker compose up -d proof-server` from its root (Docker must be running). Wait until `docker compose ps` shows the container as healthy.
-3. Open the live demo, connect Lace, enter a threshold and click **Verify Privately**.
+3. Open the live demo, connect Lace, enter a threshold and click **Verify Privately**. Recent versions of Chrome ask for permission the first time a public website talks to a server on your own machine; choose **Allow**.
 
 If the proof server is not reachable, the app shows a message explaining how to start it.
 
