@@ -10,13 +10,11 @@ The application connects to Midnight Preprod through Lace, generates a zero-know
 
 ## Live Demo
 
-**Frontend:**  
-YOUR_VERCEL_URL
+**Frontend:** [https://statproof-midnight-sable.vercel.app/](https://statproof-midnight-sable.vercel.app/)
 
 **Network:** Midnight Preprod
 
 The live application connects directly to the deployed StatProof contract on Midnight Preprod.
-
 ---
 
 ## Contract Address
