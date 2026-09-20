@@ -59,7 +59,6 @@ temp/
 # Midnight wallet sync state (per-network serialized wallet state cache)
 .midnight-wallet-state/
 
-printf '\n# Local Midnight LevelDB state\nmidnight-level-db/\n' >> .gitignore
 # Local runtime database
 midnight-level-db/
 
