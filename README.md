@@ -209,16 +209,33 @@ React + Vite in `frontend/` (the spec's `src/` frontend), with wallet detection,
 
 ## Screenshots
 
+### Level 3 — Production-Grade dApp
+
+![StatProof Level 3](docs/screenshots/statproof-level3.png)
+
+---
+
+### Level 2 — StatProof Frontend
+
 ![StatProof Frontend](docs/screenshots/statproof-frontend.png)
+
+---
+
+### Level 1 — Contract Compilation
 
 ![Contract Compilation](docs/screenshots/compile-success.png)
 
+### Level 1 — Preview Deployment
+
 ![Preview Deployment](docs/screenshots/preview-contract.png)
+
+### Level 1 — Zero-Knowledge Threshold Proof
 
 ![Zero-Knowledge Threshold Proof](docs/screenshots/zk-proof-success.png)
 
-![Public Ledger State](docs/screenshots/public-state.png)
+### Level 1 — Public Ledger State
 
+![Public Ledger State](docs/screenshots/public-state.png)
 ---
 
 ## Available Commands
