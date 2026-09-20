@@ -47,7 +47,7 @@ export function describeError(
       text,
     )
   ) {
-    return `A network request failed. If you are using the live demo, make sure the local proof server is running at ${PROOF_SERVER_URL} (Docker must be running; see the README) and that you are online, then try again.`;
+    return `A network request failed. If you are using the live demo, make sure the local proof server is running at ${PROOF_SERVER_URL} (Docker must be running; see the README), that you allowed your browser to access local network devices if it asked, and that you are online, then try again.`;
   }
 
   if (/insufficient|not enough|\bfunds?\b|\bdust\b/.test(text)) {
