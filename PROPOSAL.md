@@ -2,6 +2,8 @@
 
 ## What is the product, and who uses it?
 
+StatProof is a privacy-preserving eligibility verification dApp: a user proves that a private value satisfies a public requirement without revealing the value. The first product built on it is StatProof Feedback, where the requirement is "you actually took part in this cohort".
+
 StatProof Feedback is anonymous, verified feedback for a cohort: a university course, a bootcamp, a hackathon or a developer community. An organizer registers the members. A member can rate the cohort only if they actually took part (for example, a private attendance or participation value above a public minimum), and only once. Nobody, including the organizer, can tell who gave which rating.
 
 Users:
