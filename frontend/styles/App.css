@@ -1246,3 +1246,16 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+/* Mobile: keep the observer heading clear of the moon graphic */
+@media (max-width: 600px) {
+  .observer h2 {
+    max-width: 200px;
+  }
+
+  .eclipse {
+    width: 150px;
+    height: 150px;
+    top: -46px;
+    right: -46px;
+  }
+}
