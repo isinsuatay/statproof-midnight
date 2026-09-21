@@ -314,7 +314,7 @@ statproof-midnight/
 ## Demo Videos
 
 - [Level 2 demo](https://www.youtube.com/watch?v=8LGlebqaJIY)
-- Level 3 demo: [PASTE LINK AFTER RECORDING]
+- [Level 3 demo:] (https://www.youtube.com/watch?v=7zEdDxvWW_c) 
 
 ## License
 
